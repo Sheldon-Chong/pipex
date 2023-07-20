@@ -12,7 +12,7 @@ BONUS		=	ft_lstadd_back.c ft_lstadd_front.c ft_lstclear.c \
 BONUS_OBJS	= $(BONUS:.c=.o)
 CC			= cc
 RM			= rm -f
-FLAGS		= -Wall -Wextra -Werror -I.
+CFLAGS		= -Wall -Wextra -Werror -I.
 NAME		= libft.a
 ARFLAGS 	= -rcs
 

@@ -6,23 +6,27 @@
 /*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/18 16:09:16 by shechong          #+#    #+#             */
-/*   Updated: 2023/07/20 12:40:58 by shechong         ###   ########.fr       */
+/*   Updated: 2023/07/20 17:05:53 by shechong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
-int	gnl(int ac, char **av, char *str, int *outfile)
+int	gnl(int ac, char **av, char *str)
 {
 	char	*line;
 	int		infile;
 
-	infile = open("transfer", O_CREAT | O_WRONLY | O_TRUNC, S_IRUSR
-			| S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
+	infile = open("transfer", O_CREAT | O_WRONLY | O_TRUNC, 436);
 	write(0, "> ", 2);
 	line = get_next_line(0);
 	while (1)
 	{
+		if (!line)
+		{
+			unlink("transfer");
+			exit(0);
+		}
 		if (ft_strncmp(line, str, ft_strlen(str)) == 0
 			&& ft_strlen(line) - 1 == ft_strlen(str))
 			break ;
@@ -33,8 +37,7 @@ int	gnl(int ac, char **av, char *str, int *outfile)
 	}
 	free(line);
 	close(infile);
-	infile = open("transfer", O_RDONLY, S_IRUSR | S_IWUSR
-			| S_IRGRP | S_IWGRP | S_IROTH);
+	infile = open("transfer", O_RDONLY, 436);
 	return (infile);
 }
 
@@ -69,7 +72,7 @@ int	here_doc(int ac, char **av, char **env)
 
 	if (ac < 6)
 		return (write(2, "Invalid argument count\n", 24));
-	infile = gnl(ac, av, av[2], &outfile);
+	infile = gnl(ac, av, av[2]);
 	outfile = open_files(av[ac - 1], 'a');
 	start = scan_cmd(ac, av, env, 2);
 	i = start;

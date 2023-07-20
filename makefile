@@ -4,7 +4,7 @@ SRCS_BONUS = pipex_bonus.c pipex_utils.c
 OBJS = $(SRCS:.c=.o)
 OBJS_BONUS = $(SRCS_BONUS:.c=.o)
 
-EXEC = pipex
+NAME = pipex
 EXEC_BONUS = pipex
 
 %.o: %.c
@@ -12,13 +12,13 @@ EXEC_BONUS = pipex
 
 # __________ TARGETS  __________
 
-all: $(EXEC) 
+all: $(NAME) 
 
 bonus: $(OBJS_BONUS) libft/libft.a
-	gcc -Wall -Werror -Wextra $(OBJS_BONUS) -Llibft -lft -o $(EXEC_BONUS) -fsanitize=address -g3
+	gcc -Wall -Werror -Wextra $(OBJS_BONUS) -Llibft -lft -o $(EXEC_BONUS)
 
-$(EXEC): $(OBJS) libft/libft.a
-	gcc -Wall -Werror -Wextra $(OBJS) -Llibft -lft -o $(EXEC) -fsanitize=address -g3
+$(NAME): $(OBJS) libft/libft.a
+	gcc -Wall -Werror -Wextra $(OBJS) -Llibft -lft -o $(NAME) -fsanitize=address -g3
 
 libft/libft.a:
 	$(MAKE) -C libft
@@ -26,7 +26,7 @@ libft/libft.a:
 # __________ CLEANING __________
 
 fclean: clean
-	rm -rf $(EXEC) $(EXEC_BONUS)
+	rm -rf $(NAME) $(EXEC_BONUS)
 	$(MAKE) -C libft fclean
 
 clean:
