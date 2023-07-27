@@ -5,19 +5,19 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/18 16:09:16 by shechong          #+#    #+#             */
-/*   Updated: 2023/07/20 17:05:53 by shechong         ###   ########.fr       */
+/*   Created: 2023/07/27 12:24:33 by shechong          #+#    #+#             */
+/*   Updated: 2023/07/27 12:24:37 by shechong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
 
-int	gnl(int ac, char **av, char *str)
+int	gnl(char *str, int pipefd[2])
 {
 	char	*line;
-	int		infile;
 
-	infile = open("transfer", O_CREAT | O_WRONLY | O_TRUNC, 436);
+	close(pipefd[0]);
+	dup2(pipefd[1], 1);
 	write(0, "> ", 2);
 	line = get_next_line(0);
 	while (1)
@@ -31,14 +31,35 @@ int	gnl(int ac, char **av, char *str)
 			&& ft_strlen(line) - 1 == ft_strlen(str))
 			break ;
 		write(0, "> ", 2);
-		ft_putstr_fd(line, infile);
+		ft_putstr_fd(line, 1);
 		free(line);
 		line = get_next_line(0);
 	}
 	free(line);
-	close(infile);
-	infile = open("transfer", O_RDONLY, 436);
-	return (infile);
+	return (1);
+}
+
+void	run_cmd_redir2(char *cmd, char **env, char p, char **av)
+{
+	int	pipe_fd[2];
+	int	pid;
+
+	if (pipe(pipe_fd) == -1)
+		exit(0);
+	pid = fork();
+	if (pid == -1)
+		exit(0);
+	if (pid != 0)
+	{
+		close(pipe_fd[1]);
+		dup2(pipe_fd[0], 0);
+	}
+	else
+	{
+		close(pipe_fd[0]);
+		dup2(pipe_fd[1], 1);
+	}
+	return ;
 }
 
 void	last_cmd(char *cmd, char **env, int infile, int outfile)
@@ -64,31 +85,31 @@ void	last_cmd(char *cmd, char **env, int infile, int outfile)
 
 int	here_doc(int ac, char **av, char **env)
 {
-	int	infile;
 	int	outfile;
-	int	buffer;
 	int	i;
 	int	start;
+	int	pipefd[2];
+	int	pid;
 
 	if (ac < 6)
 		return (write(2, "Invalid argument count\n", 24));
-	infile = gnl(ac, av, av[2]);
+	pipe(pipefd);
+	pid = fork();
+	if (pid == 0)
+		exit(gnl("test", pipefd));
+	close(pipefd[1]);
+	wait(0);
 	outfile = open_files(av[ac - 1], 'a');
 	start = scan_cmd(ac, av, env, 2);
-	i = start;
-	if (start == 1)
-		i ++;
-	buffer = open("buffer", O_RDONLY | O_CREAT | O_TRUNC, 436);
-	dup2(buffer, 0);
-	if (start == 1)
-		dup2(infile, 0);
+	i = start + (start == 1);
+	if (start != 1)
+		pipefd[0] = open("/dev/null", 0);
+	dup2(pipefd[0], 0);
 	while (++i < ac - 2 && ac - start >= 4)
 		run_cmd_redir(av[i], env);
 	dup2(outfile, 1);
-	last_cmd(av[ac - 2], env, infile, outfile);
-	if (start == 1)
-		return (0);
-	return (1);
+	last_cmd(av[ac - 2], env, outfile, outfile);
+	return (0);
 }
 
 int	main(int ac, char **av, char **env)
@@ -107,14 +128,11 @@ int	main(int ac, char **av, char **env)
 	i = start;
 	infile = open_files(av[1], 'i');
 	outfile = open_files(av[ac - 1], 'o');
-	transfer = open("transfer", O_RDONLY | O_CREAT, 436);
-	dup2(transfer, 0);
+	dup2(open("/dev/null", 0), 0);
 	if (start == 1)
 		dup2(infile, 0);
 	while (++i < ac - 2 && ac - start >= 4)
 		run_cmd_redir(av[i], env);
 	dup2(outfile, 1);
 	last_cmd(av[ac - 2], env, infile, outfile);
-	if (start != 1)
-		return (1);
 }

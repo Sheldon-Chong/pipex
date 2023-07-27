@@ -6,7 +6,7 @@
 /*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/18 16:09:39 by shechong          #+#    #+#             */
-/*   Updated: 2023/07/20 12:11:05 by shechong         ###   ########.fr       */
+/*   Updated: 2023/07/24 12:31:35 by shechong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,6 @@ void	last_cmd(char *cmd, char **env, int infile, int outfile)
 	else
 	{
 		wait(0);
-		unlink("transfer");
-		unlink("buffer");
 		close(infile);
 		close(outfile);
 	}
@@ -45,7 +43,7 @@ int	main(int ac, char **av, char **env)
 	start = 1;
 	infile = open_files(av[1], 'i');
 	outfile = open_files(av[4], 'o');
-	transfer = open("transfer", O_RDONLY | O_CREAT, 436);
+	transfer = open("/dev/null", O_RDONLY | O_CREAT, 436);
 	if (outfile > 0)
 		start = scan_cmd(ac, av, env, 1);
 	dup2(transfer, 0);
