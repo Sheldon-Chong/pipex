@@ -15,7 +15,7 @@ EXEC_BONUS = pipex
 all: $(NAME) 
 
 bonus: $(OBJS_BONUS) libft/libft.a
-	gcc -Wall -Werror -Wextra $(OBJS_BONUS) -Llibft -lft -o $(EXEC_BONUS)
+	gcc -Wall -Werror -Wextra $(OBJS_BONUS) -Llibft -lft -o $(EXEC_BONUS) -fsanitize=address -g3
 
 $(NAME): $(OBJS) libft/libft.a
 	gcc -Wall -Werror -Wextra $(OBJS) -Llibft -lft -o $(NAME) -fsanitize=address -g3

@@ -6,7 +6,7 @@
 /*   By: shechong <shechong@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 12:24:33 by shechong          #+#    #+#             */
-/*   Updated: 2023/07/27 12:24:37 by shechong         ###   ########.fr       */
+/*   Updated: 2023/07/31 11:51:13 by shechong         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,7 @@ int	gnl(char *str, int pipefd[2])
 	while (1)
 	{
 		if (!line)
-		{
-			unlink("transfer");
 			exit(0);
-		}
 		if (ft_strncmp(line, str, ft_strlen(str)) == 0
 			&& ft_strlen(line) - 1 == ft_strlen(str))
 			break ;
@@ -76,8 +73,6 @@ void	last_cmd(char *cmd, char **env, int infile, int outfile)
 	else
 	{
 		wait(0);
-		unlink("transfer");
-		unlink("buffer");
 		close(infile);
 		close(outfile);
 	}
@@ -96,7 +91,7 @@ int	here_doc(int ac, char **av, char **env)
 	pipe(pipefd);
 	pid = fork();
 	if (pid == 0)
-		exit(gnl("test", pipefd));
+		exit(gnl(av[2], pipefd));
 	close(pipefd[1]);
 	wait(0);
 	outfile = open_files(av[ac - 1], 'a');
