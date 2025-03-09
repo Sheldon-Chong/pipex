@@ -24,7 +24,7 @@ The format for input in Pipex is the following:
 ```zsh
 ./pipex file1 "cmd1" "cmd2" file2
 ```
-The program takes the contents of the first file, and utilize it as the stdin (standard input) for cmd1. Cmd1 will then execute, and its output is passed as the input f or cmd2, so on and so forth. The final argument is the output file, where the output of cmd2 will be passed to.
+The program takes the contents of the first file, and utilize it as the stdin (standard input) for `cmd1`. `cmd1` will then execute, and its output is passed as the input for `cmd2`, so on and so forth. The final argument is the output file, where the output of the last command will be passed to.
 
 The equivalent in linux would be
 ```zsh
